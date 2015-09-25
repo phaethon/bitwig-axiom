@@ -1,6 +1,4 @@
 # bitwig-axiom61
-Axiom 61 2nd gen controller script for Bitwig
-
 Should work with Axiom 25, 49, 61 both 1st and 2nd gen, though tested only on Axiom 61 2nd gen.
 
 Assignments are hard coded as follows:
