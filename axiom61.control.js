@@ -8,6 +8,8 @@ var MACRO_LOW = 20;
 var MACRO_HIGH = 27;
 var TRANSPORT_LOW = 113;
 var TRANSPORT_HIGH = 118;
+var PARAM_LOW = 70;
+var PARAM_HIGH = 78;
 var LOOP = 113;
 var REW = 114;
 var FWD = 115;
@@ -21,7 +23,7 @@ var TRACK_BUT_LOW = 102;
 var TRACK_BUT_HIGH = 109;
 var USER_BUTTON = 110;
 
-var knobValues = [];
+var rotaryMacro = true;
 
 function isRotary(cc) {
     return cc >= MACRO_LOW && cc <= MACRO_HIGH;
@@ -38,6 +40,10 @@ function init() {
     transport = host.createTransport();
     masterTrack = host.createMasterTrack(0);
     tracks = host.createMainTrackBank(8, 2, 16);
+    cursorDevice = host.createEditorCursorDevice();
+    for (var i = 0; i < 8; i++ )
+        cursorDevice.getParameter(i).setIndication(true);
+
     println("init");
 }
 
@@ -49,25 +55,47 @@ function onMidiPort1(status, data1, data2) {
 
         } else if (data1 >= TRACK_VOL_LOW && data1 <= TRACK_VOL_HIGH) {
             var index = data1 - TRACK_VOL_LOW;
-            tracks.getTrack(index).getVolume().set(data2, 128);
+            //if (rotaryMacro) {
+                tracks.getTrack(index).getVolume().set(data2, 128);
+            //} else {
+            //    primaryDevice.getCommonParameter(index).set(data2, 128);
+            //}
 
         } else if (data1 >= TRACK_BUT_LOW && data1 <= TRACK_BUT_HIGH) {
             var index = data1 - TRACK_BUT_LOW;
             if (data2 > 0)
+                //tracks.getTrack(index).
                 tracks.getTrack(index).getArm().toggle();
 
+        } else if (data1 >= PARAM_LOW && data1 <= PARAM_HIGH) {
+                //var primaryDevice = cursorTrack.getPrimaryDevice();
+
+            if (data1 < PARAM_HIGH) {
+                //cursorDevice.isParameterPageSectionVisible().set(true);
+                cursorDevice.isMacroSectionVisible().set(false);
+                cursorDevice.setParameterPage(data1 - PARAM_LOW);
+                rotaryMacro = false;
+            } else {
+                //cursorDevice.isParameterPageSectionVisible().set(false);
+                cursorDevice.isMacroSectionVisible().set(true);
+                rotaryMacro = true;
+            }
         } else if (data1 >= TRANSPORT_LOW && data1 <= TRANSPORT_HIGH && data2 >0 ) {
             switch(data1) {
-                case REW: cursorTrack.selectPrevious(); break;
-                case FWD: cursorTrack.selectNext(); break;
+                case REW: cursorTrack.getPrimaryDevice().switchToPreviousPreset(); break; //case REW: cursorTrack.selectPrevious(); break;
+                case FWD: cursorTrack.getPrimaryDevice().switchToNextPreset(); break; //case FWD: cursorTrack.selectNext(); break;
                 case STOP: transport.stop(); break;
                 case PLAY: transport.play(); break;
                 case REC: transport.record(); break;
                 case LOOP: cursorTrack.getPrimaryDevice().isWindowOpen().toggle();
             }
         } else if (isRotary(data1)) {
-            var primaryDevice = cursorTrack.getPrimaryDevice();
-            var value = primaryDevice.getMacro(data1 - MACRO_LOW).getAmount();
+            //var primaryDevice = cursorTrack.getPrimaryDevice();
+            if (rotaryMacro) {
+                var value = cursorDevice.getMacro(data1 - MACRO_LOW).getAmount();
+            } else {
+                var value = cursorDevice.getParameter(data1 - MACRO_LOW);
+            }
             value.inc(Math.log((Math.abs(64 - data2)) + 1) * (data2 - 64) / Math.abs(64 - data2), 128);
         } else if (data1 == USER_BUTTON) {
             userControls.getControl(0).set(data2, 128);
