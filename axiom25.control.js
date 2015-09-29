@@ -15,18 +15,21 @@ var PARAM_PAGE = 0;
 
 var ROT_MODE = MODE_MACRO;
 
-var MACRO_LOW = 20;
-var MACRO_HIGH = 27;
-var TRANSPORT_LOW = 113;
-var TRANSPORT_HIGH = 118;
+var MACRO_LOW = 40;
+var MACRO_HIGH = 47;
+var TRANSPORT_LOW = 20;
+var TRANSPORT_HIGH = 25;
 var PARAM_LOW = 70;
 var PARAM_HIGH = 78;
-var LOOP = 113;
-var REW = 114;
-var FWD = 115;
-var STOP = 116;
-var PLAY = 117;
-var REC = 118;
+var LOOP = 20;
+var REW = 21;
+var FWD = 22;
+var STOP = 23;
+var PLAY = 24;
+var REC = 25;
+var TRACK_VOL_LOW = 80;
+var TRACK_VOL_HIGH = 87;
+
 
 function isRotary(cc) {
     return cc >= MACRO_LOW && cc <= MACRO_HIGH;
@@ -77,6 +80,10 @@ function onMidiPort1(status, data1, data2) {
                 }
                 enableIndication();
             }
+        } else if (data1 >= TRACK_VOL_LOW && data1 <= TRACK_VOL_HIGH) {
+            var index = data1 - TRACK_VOL_LOW;
+            tracks.getTrack(index).getVolume().set(data2, 128);
+
         } else if (data1 >= TRANSPORT_LOW && data1 <= TRANSPORT_HIGH && data2 >0 ) {
             switch(data1) {
                 case REW: cursorDevice.switchToPreviousPreset(); break; //case REW: cursorTrack.selectPrevious(); break;
