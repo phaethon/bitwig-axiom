@@ -1,16 +1,16 @@
-# bitwig-axiom61
-Should work with Axiom 25, 49, 61 both 1st and 2nd gen, though tested only on Axiom 61 2nd gen.
+# bitwig-axiom
+Should work with Axiom 25, 49, 61 both 1st and 2nd gen. Tested on Axiom 61 2nd gen and Axiom 25 1st gen.
 
 Assignments are hard coded as follows:
 - 8 sliders to volume control of first 8 tracks
 - Last slider to master volume control
 - 8 buttons below sliders to toggling arm of first 8 tracks in PATCH 1
-- 8 buttons to select active parameter page, 9th button to select Macros
+- 8 buttons to select active parameter page, 9th button to select Macros (in PATCH 2)
 - Button below master volume is free for user defined function (e.g. launching)
-- Rotary encoders are depending to 9 buttons pressed mapped to 8 parameters or 8 macro knobs (changing incrementally)
+- Rotary encoders are depending on 9 buttons pressed mapped to 8 parameters or 8 macro knobs (changing incrementally)
 - Pressure pads are not mapped (I assign them to 8 notes to match drum container pads)
 - Play, Rec, Stop mapped to transport
-- Rew, Fwd mapped to selecting previous/next track
+- Rew, Fwd mapped to selecting previous/next preset
 - Loop toggling display for current VST GUI
 
 Manual configuration required:
